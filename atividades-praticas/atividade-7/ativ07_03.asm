@@ -17,15 +17,11 @@ MAIN PROC
     INT 21H
 
     XOR SI, SI ; Endereço base do vetor (posição 0)
-    MOV DI, 7 ; Endereço final do vetor (posição 7)
-
-    ; ; Lê o vetor
+    MOV CX, 7
+    MOV AH, 01
+    ; Lê o vetor
     FOR_LEITURA:
-        CMP DI, 0 ; Verifica se passou por todos os indices do vetor
-        JZ END_FOR_LEITURA
-
         ; Le o caracter
-        MOV AH, 01
         INT 21H
         
         AND AL, 0FH ; Transforma o caracter em número
@@ -33,28 +29,24 @@ MAIN PROC
 
         ; Pula para a próxima iteração
         INC SI
-        DEC DI
-        JMP FOR_LEITURA
+        
+        LOOP FOR_LEITURA
     END_FOR_LEITURA:
 
     ; Reinicializa os registradores de indexação
     XOR SI, SI
     MOV DI, 6
-    
+    xor cx,3
     ; Realiza a inversão do vetor
     FOR_INVERSAO:
-        CMP SI, 4 ; Para não inverter duas vezes, determina o loop até a 'metade' do tamanho do vetor, no caso 4
-        JE END_FOR_INVERSAO
-
         ; Utiliza os registradores DL e DH para armazenar de forma temporária os valores a serem modificados
         MOV DL, ARRAY[DI]
-        MOV DH, ARRAY[SI]
-        MOV ARRAY[SI], DL
-        MOV ARRAY[DI], DH
+        XCHG ARRAY[SI],Dl
+        MOV ARRAY[DI], DL
 
         INC SI
         DEC DI
-        JMP FOR_INVERSAO
+        LOOP FOR_INVERSAO
     END_FOR_INVERSAO:
 
     ; Reinicializa os registradores de indexação
